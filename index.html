@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My GitHub Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+    <style>
+        /* Main.css (User Provided CSS with adaptations from previous response) */
+        /* Base Styles */
+        .font-pirata {
+            font-family: 'Pirata One', cursive;
+        }
+
+        body {
+            overflow: hidden;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000000;
+            margin: 0;
+            padding: 0;
+            cursor: default;
+            color: #1b4c91;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+
+        #threejs-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -10; overflow: hidden;
+        }
+        #threejs-bg canvas { display: block; }
+
+        #portfolio-main-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 90%;
+            max-width: 750px; /* Slightly wider for more content */
+            height: 85vh; /* Adjusted height */
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 1;
+            background: rgba(10, 10, 10, 0.88);
+            border: 1px solid #333;
+            border-radius: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #555 #222;
+        }
+        #portfolio-main-content::-webkit-scrollbar { width: 8px; }
+        #portfolio-main-content::-webkit-scrollbar-track { background: #222; border-radius: 4px; }
+        #portfolio-main-content::-webkit-scrollbar-thumb { background-color: #555; border-radius: 4px; border: 2px solid #222; }
+
+        h1, h2 {
+            font-family: 'Pirata One', cursive;
+            color: #630707;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.3em;
+            margin-top: 0;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+         #portfolio-main-content > h1 { margin-bottom: 20px; font-size: 2.5em;}
+
+
+        .project-list { list-style: none; padding: 0; }
+        .project-item {
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            border: 1px solid #383838;
+            border-radius: 6px;
+            background-color: rgba(25, 25, 25, 0.75); /* Slightly lighter item bg */
+            position: relative;
+        }
+        .project-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .project-item h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-family: 'Pirata One', cursive;
+            font-size: 1.8em;
+            font-weight: normal;
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        .project-item h3 a { text-decoration: none; color: #af0de0; }
+        .project-item h3 a:hover { text-decoration: underline; }
+
+        .project-website-link, .project-homepage-link { /* Combined style for website links */
+            display: block;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            color: #ce3a0e;
+            word-break: break-all;
+        }
+        .project-website-link a, .project-homepage-link a {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        .project-item .description {
+            margin-bottom: 12px;
+            color: #e00cb2;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .project-item .meta { font-size: 0.85em; color: #8b949e; }
+        .project-item .meta span { margin-right: 15px; display: inline-block; white-space: nowrap; }
+
+        .readme-link {
+            font-size: 0.8em; color: #58a6ff; text-decoration: none;
+            padding: 3px 6px; border: 1px solid #444; border-radius: 4px;
+            background-color: rgba(50,50,50,0.6); white-space: nowrap;
+            transition: background-color 0.2s ease;
+        }
+        .readme-link:hover { background-color: rgba(70,70,70,0.8); border-color: #555; }
+
+        .loader { text-align: center; padding: 20px; font-size: 1.2em; color: #8b949e; }
+        .error, .info-message {
+            text-align: center; padding: 10px; border-radius: 6px; margin-top: 10px;
+        }
+        .error { color: #f85149; border: 1px solid #f85149; background-color: rgba(248, 81, 73, 0.1); }
+        .info-message { color: #d1d5db; border: 1px solid #555; background-color: rgba(50, 50, 50, 0.5); }
+
+        .config-info {
+            background-color: rgba(50, 50, 0, 0.3); padding: 10px 15px;
+            border: 1px solid #666600; border-radius: 6px; margin-bottom: 20px;
+            font-size: 0.9em; color: #ec5914;
+        }
+        .config-info strong { color: #f0e68c; }
+
+        .profile-info-container { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #444; }
+        .profile-info-container h2 { text-align: left; margin-bottom: 10px; font-size: 1.5em; }
+        .profile-details { display: flex; align-items: flex-start; }
+        .profile-details img { width: 60px; height: 60px; border-radius: 50%; margin-right: 15px; border: 2px solid #555; }
+        .profile-details div { flex-grow: 1; }
+        .profile-details p { margin: 0 0 8px 0; font-size: 0.9em; color: #a1b0be; line-height: 1.4; }
+        .profile-details p:last-child { margin-bottom: 0; }
+        .profile-details a { color: #58a6ff; text-decoration: none; }
+        .profile-details a:hover { text-decoration: underline; }
+
+        .section-title {
+            font-family: 'Pirata One', cursive; color: #7e0d0d; font-size: 1.7em; /* Increased size */
+            margin-top: 25px; margin-bottom: 15px; padding-bottom: 8px; /* Increased padding */
+            border-bottom: 1px dashed #555; /* Darker dashed line */
+            text-align: left;
+        }
+        /* Other styles from user's CSS for TV, audio etc. are kept as provided if they were there */
+    </style>
+</head>
+<body>
+    <div id="threejs-bg"></div>
+
+    <div id="portfolio-main-content">
+        <h1>GitHub Portfolio</h1>
+
+        <div class="config-info">
+            <p><strong>Configuration:</strong> Edit URLs and the <code>EXCLUDED_REPOS</code> list in the script.
+            <br><strong>Private Repos:</strong> Info from selected private repos (name/website) is displayed from <code>private_data.txt</code> (if generated by GitHub Actions). This makes that specific info public.
+            </p>
+        </div>
+
+        <div id="userSection">
+            <div id="userInfoContainer" class="profile-info-container" style="display:none;"></div>
+            <div id="userReposSection" style="display:none;">
+                <h2 class="section-title">My Public Projects</h2>
+                <div id="userReposLoader" class="loader">Loading public projects...</div>
+                <ul id="userRepos" class="project-list"></ul>
+                <div id="userError" class="error" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div id="privateSection" style="display:none;"> <h2 class="section-title">Selected Private Projects</h2>
+            <div id="privateReposLoader" class="loader">Loading selected private projects...</div>
+            <ul id="privateRepos" class="project-list"></ul>
+            <div id="privateError" class="error" style="display:none;"></div>
+            <div id="privateInfo" class="info-message" style="display:none;"></div>
+        </div>
+
+        <div id="orgSection">
+            <div id="orgInfoContainer" class="profile-info-container" style="display:none;"></div>
+            <div id="orgReposSection" style="display:none;">
+                <h2 class="section-title">Public Organization Projects</h2>
+                <div id="orgReposLoader" class="loader">Loading public organization projects...</div>
+                <ul id="orgRepos" class="project-list"></ul>
+                <div id="orgError" class="error" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --------------- CONFIGURATION ---------------
+        const YOUR_GITHUB_PROFILE_URL = "https://github.com/Envoyofhell/"; // e.g., "https://github.com/yourusername"
+        const YOUR_ORGANIZATION_GITHUB_URL = "https://github.com/Envoys-Realm"; // e.g., "https://github.com/yourorganization"
+
+        // Add names of repositories you want to exclude from ALL lists (public, private, org)
+        const EXCLUDED_REPOS = [
+        "ryuu-play",
+        "7D2D-EOH-Vehicle-Test",
+        "7D2D-EOH-GodBow",
+        "7D2D-EOH-Harvester",
+        "7D2D-EOH-Weapons-of-The-Realm",
+        "Random-Pokemon-Generator",
+        "tabletop-server",
+        "meta-tabletop",
+        "BallsDex-DiscordBot",
+        "pokecardmaker.net",
+        "projectkcardgenerator",
+        "cookie-clicker",
+        "pokemon-cards-css",
+            "RPG-Lore"
+        ];
+        // --------------- END CONFIGURATION ---------------
+
+        const GITHUB_USERNAME = getUsernameFromUrl(YOUR_GITHUB_PROFILE_URL);
+        const ORGANIZATION_NAME = getUsernameFromUrl(YOUR_ORGANIZATION_GITHUB_URL);
+
+        // DOM Elements
+        const userReposContainer = document.getElementById('userRepos');
+        const orgReposContainer = document.getElementById('orgRepos');
+        const privateReposContainer = document.getElementById('privateRepos');
+
+        const userLoader = document.getElementById('userReposLoader');
+        const orgLoader = document.getElementById('orgReposLoader');
+        const privateLoader = document.getElementById('privateReposLoader');
+
+        const userErrorDiv = document.getElementById('userError');
+        const orgErrorDiv = document.getElementById('orgError');
+        const privateErrorDiv = document.getElementById('privateError');
+        const privateInfoDiv = document.getElementById('privateInfo');
+
+
+        const userInfoContainer = document.getElementById('userInfoContainer');
+        const orgInfoContainer = document.getElementById('orgInfoContainer');
+        const userReposSectionElem = document.getElementById('userReposSection');
+        const orgReposSectionElem = document.getElementById('orgReposSection');
+        const privateSectionElem = document.getElementById('privateSection');
+
+
+        function getUsernameFromUrl(url) {
+            if (!url || url.trim() === "") return null;
+            try {
+                const path = new URL(url).pathname;
+                const parts = path.split('/').filter(part => part.length > 0);
+                return parts.length > 0 ? parts[0] : null;
+            } catch (e) { console.error("Invalid URL:", url, e); return null; }
+        }
+
+        // Generic fetch function (can fetch API or local files)
+        async function fetchJsonData(url, loaderElement, errorElement, infoElement, isApiCall = false) {
+            if (loaderElement) loaderElement.style.display = 'block';
+            if (errorElement) errorElement.style.display = 'none';
+            if (infoElement) infoElement.style.display = 'none';
+
+            const options = {};
+            if (isApiCall) {
+                options.headers = { 'Accept': 'application/vnd.github.v3+json' };
+            }
+
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                     // Special handling for 404 of the local data file
+                    if (response.status === 404 && url.endsWith('private_data.txt')) { // <-- CHECK FOR RENAMED FILE
+                         throw new Error(`File not found at ${url}. Ensure the GitHub Action ran successfully and deployed the file.`);
+                    }
+                    // Handle API errors
+                    const errorData = await response.json().catch(() => ({ message: "Failed to parse error response." }));
+                    throw new Error(`API/Fetch Error: ${response.status} ${errorData.message || response.statusText}`);
+                }
+                // Check content type for JSON before parsing
+                const contentType = response.headers.get("content-type");
+                // Allow JSON or plain text for our renamed file
+                if ((contentType && contentType.indexOf("application/json") !== -1) || url.endsWith('private_data.txt')) {
+                    const textData = await response.text();
+                    try {
+                        return JSON.parse(textData); // Attempt to parse text as JSON
+                    } catch (parseError) {
+                         throw new Error(`Failed to parse content from ${url} as JSON: ${parseError.message}`);
+                    }
+                } else {
+                     throw new Error(`Unexpected content type (${contentType}) received from ${url}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching ${url}:`, error);
+                const fileNotFoundMsg = "File not found";
+                // Check if the error is for the renamed file
+                if (error.message.includes(fileNotFoundMsg) && infoElement && url.endsWith('private_data.txt')) {
+                    infoElement.textContent = error.message;
+                    infoElement.style.display = 'block';
+                } else if (errorElement) {
+                    errorElement.textContent = `Failed to load data: ${error.message}. Check console.`;
+                    errorElement.style.display = 'block';
+                }
+                return null;
+            } finally {
+                if (loaderElement) loaderElement.style.display = 'none';
+            }
+        }
+
+
+        function renderPublicRepo(repo) { // For full data from GitHub API
+            if (EXCLUDED_REPOS.includes(repo.name)) return null;
+
+            const listItem = document.createElement('li');
+            listItem.className = 'project-item';
+            const description = repo.description || 'No description available.';
+            const language = repo.language || 'N/A';
+            const homepageLinkHTML = repo.homepage
+                ? `<div class="project-homepage-link">Website: <a href="${repo.homepage}" target="_blank" rel="noopener noreferrer">${repo.homepage}</a></div>`
+                : '';
+            const readmeUrl = `${repo.html_url}/blob/${repo.default_branch || 'main'}/README.md`;
+
+            listItem.innerHTML = `
+                <div class="project-item-header">
+                    <h3><a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a></h3>
+                    <a href="${readmeUrl}" class="readme-link" target="_blank" rel="noopener noreferrer">README</a>
+                </div>
+                ${homepageLinkHTML}
+                <p class="description">${description}</p>
+                <div class="meta">
+                    <span>⭐ Stars: ${repo.stargazers_count}</span>
+                    <span>🍴 Forks: ${repo.forks_count}</span>
+                    <span>🔷 Language: ${language}</span>
+                    ${repo.license ? `<span>📜 License: ${repo.license.name}</span>` : ''}
+                </div>
+            `;
+            return listItem;
+        }
+
+        function renderPrivateRepo(repo) { // For limited data from custom file
+            // Expects repo = { name: "...", html_url: "...", homepage: "..." }
+            if (EXCLUDED_REPOS.includes(repo.name)) return null;
+
+            const listItem = document.createElement('li');
+            listItem.className = 'project-item';
+            const homepageLinkHTML = repo.homepage
+                ? `<div class="project-website-link">Website: <a href="${repo.homepage}" target="_blank" rel="noopener noreferrer">${repo.homepage}</a></div>`
+                : '<div class="project-website-link">No public website specified.</div>';
+
+            listItem.innerHTML = `
+                <div class="project-item-header">
+                    <h3><a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a></h3>
+                    </div>
+                ${homepageLinkHTML}
+                <p class="description"><i>Details for this private repository are not publicly listed beyond name and website.</i></p>
+            `;
+            return listItem;
+        }
+
+
+        async function displayUserRepos() {
+            if (!GITHUB_USERNAME) {
+                document.getElementById('userSection').style.display = 'none';
+                if(userLoader) userLoader.style.display = 'none';
+                return;
+            }
+            document.getElementById('userSection').style.display = 'block';
+            if(userInfoContainer) userInfoContainer.style.display = 'block';
+            if(userReposSectionElem) userReposSectionElem.style.display = 'block';
+
+            const userApiUrl = `https://api.github.com/users/${GITHUB_USERNAME}`;
+            const reposApiUrl = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&direction=desc&per_page=30`;
+
+            // Fetch user profile info (this is an API call)
+            const userData = await fetchJsonData(userApiUrl, userLoader, userErrorDiv, null, true);
+            if (userData && userInfoContainer) {
+                userInfoContainer.innerHTML = `
+                    <h2 class="section-title">About ${userData.name || GITHUB_USERNAME}</h2>
+                    <div class="profile-details">
+                        ${userData.avatar_url ? `<img src="${userData.avatar_url}" alt="${GITHUB_USERNAME}" width="60" height="60">` : ''}
+                        <div>
+                            ${userData.bio ? `<p>${userData.bio}</p>` : ''}
+                            <p>Public Repos: ${userData.public_repos} | Followers: ${userData.followers}</p>
+                            <p><a href="${userData.html_url}" target="_blank">View Profile on GitHub</a></p>
+                        </div>
+                    </div>`;
+            } else if(userInfoContainer) {
+                 userInfoContainer.style.display = 'none';
+            }
+
+            // Fetch public repos (this is an API call)
+            const repos = await fetchJsonData(reposApiUrl, userLoader, userErrorDiv, null, true);
+            if (repos) {
+                if (repos.length > 0) {
+                    userReposContainer.innerHTML = '';
+                    let displayedCount = 0;
+                    repos.forEach(repo => {
+                        const repoItem = renderPublicRepo(repo);
+                        if (repoItem) {
+                            userReposContainer.appendChild(repoItem);
+                            displayedCount++;
+                        }
+                    });
+                    if (displayedCount === 0 && userErrorDiv) {
+                        userErrorDiv.textContent = 'No public repositories to display (after exclusions).';
+                        userErrorDiv.style.display = 'block';
+                    }
+                } else if (userErrorDiv) {
+                    userErrorDiv.textContent = 'No public repositories found for this user.';
+                    userErrorDiv.style.display = 'block';
+                }
+            }
+        }
+
+
+        async function displayOrgRepos() {
+            if (!ORGANIZATION_NAME) {
+                document.getElementById('orgSection').style.display = 'none';
+                if(orgLoader) orgLoader.style.display = 'none';
+                return;
+            }
+            document.getElementById('orgSection').style.display = 'block';
+            if(orgInfoContainer) orgInfoContainer.style.display = 'block';
+            if(orgReposSectionElem) orgReposSectionElem.style.display = 'block';
+
+
+            const orgApiUrl = `https://api.github.com/orgs/${ORGANIZATION_NAME}`;
+            const reposApiUrl = `https://api.github.com/orgs/${ORGANIZATION_NAME}/repos?sort=updated&direction=desc&per_page=30`;
+
+            // Fetch org profile info (API call)
+            const orgData = await fetchJsonData(orgApiUrl, orgLoader, orgErrorDiv, null, true);
+            if (orgData && orgInfoContainer) {
+                orgInfoContainer.innerHTML = `
+                     <h2 class="section-title">About ${orgData.name || ORGANIZATION_NAME}</h2>
+                    <div class="profile-details">
+                        ${orgData.avatar_url ? `<img src="${orgData.avatar_url}" alt="${ORGANIZATION_NAME}" width="60" height="60">` : ''}
+                        <div>
+                            ${orgData.description ? `<p>${orgData.description}</p>` : ''}
+                            <p>Public Repos: ${orgData.public_repos}</p>
+                            <p><a href="${orgData.html_url || `https://github.com/${ORGANIZATION_NAME}`}" target="_blank">View Organization on GitHub</a></p>
+                        </div>
+                    </div>`;
+            } else if(orgInfoContainer) {
+                 orgInfoContainer.style.display = 'none';
+            }
+
+            // Fetch public org repos (API call)
+            const repos = await fetchJsonData(reposApiUrl, orgLoader, orgErrorDiv, null, true);
+            if (repos) {
+                if (repos.length > 0) {
+                    orgReposContainer.innerHTML = '';
+                    let displayedCount = 0;
+                    repos.forEach(repo => {
+                        const repoItem = renderPublicRepo(repo);
+                        if (repoItem) {
+                            orgReposContainer.appendChild(repoItem);
+                            displayedCount++;
+                        }
+                    });
+                     if (displayedCount === 0 && orgErrorDiv) {
+                        orgErrorDiv.textContent = 'No public organization repositories to display (after exclusions).';
+                        orgErrorDiv.style.display = 'block';
+                    }
+                } else if (orgErrorDiv) {
+                    orgErrorDiv.textContent = 'No public repositories found for this organization.';
+                    orgErrorDiv.style.display = 'block';
+                }
+            }
+        }
+
+        async function displayPrivateRepos() {
+            if (!GITHUB_USERNAME) { // Assuming private repos are tied to the personal account
+                 privateSectionElem.style.display = 'none';
+                 if(privateLoader) privateLoader.style.display = 'none';
+                return;
+            }
+            privateSectionElem.style.display = 'block';
+
+            // Attempt to fetch the pre-generated file (RENAMED)
+            // This is NOT an API call, it's fetching a local file relative to index.html
+            // *** THIS IS THE CORRECTED LINE ***
+            const privateData = await fetchJsonData('private_data.txt', privateLoader, privateErrorDiv, privateInfoDiv, false);
+
+            if (privateData) { // privateData will be null if fetch fails (e.g. 404)
+                if (privateData.length > 0) {
+                    privateReposContainer.innerHTML = ''; // Clear previous
+                    let displayedCount = 0;
+                    privateData.forEach(repo => {
+                        const repoItem = renderPrivateRepo(repo); // Use the private repo renderer
+                        if (repoItem) {
+                            privateReposContainer.appendChild(repoItem);
+                            displayedCount++;
+                        }
+                    });
+                    if (displayedCount === 0 && privateErrorDiv) {
+                        privateErrorDiv.textContent = 'No selected private repositories to display (after exclusions).';
+                        privateErrorDiv.style.display = 'block';
+                    }
+                } else if (privateInfoDiv) { // Empty array in JSON
+                    // Check if the file was actually empty or just failed to parse
+                    if(privateData instanceof Array && privateData.length === 0) {
+                        privateInfoDiv.textContent = 'No private repository data found in private_data.txt (file was empty).';
+                    } else {
+                         privateInfoDiv.textContent = 'Could not process data from private_data.txt.'; // Fallback message
+                    }
+                    privateInfoDiv.style.display = 'block';
+                }
+            }
+            // If privateData is null (fetch failed), error/info messages are handled by fetchJsonData
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let sectionsToShow = 0;
+            if (GITHUB_USERNAME) sectionsToShow++;
+            if (ORGANIZATION_NAME) sectionsToShow++;
+            if (GITHUB_USERNAME) sectionsToShow++; // For private repos tied to user
+
+            if (sectionsToShow === 0 && !YOUR_GITHUB_PROFILE_URL && !YOUR_ORGANIZATION_GITHUB_URL) {
+                 const configInfo = document.querySelector('.config-info');
+                 configInfo.innerHTML += "<p style='color:#f85149; font-weight:bold;'>Please configure your GitHub profile URL or Organization URL in the script!</p>";
+                 if(userLoader) userLoader.style.display = 'none';
+                 if(orgLoader) orgLoader.style.display = 'none';
+                 if(privateLoader) privateLoader.style.display = 'none';
+                 return;
+            }
+
+            if (GITHUB_USERNAME) {
+                displayUserRepos();
+                displayPrivateRepos(); // Attempt to load private repos for the user
+            } else {
+                document.getElementById('userSection').style.display = 'none';
+                privateSectionElem.style.display = 'none';
+                if(userLoader) userLoader.style.display = 'none';
+                if(privateLoader) privateLoader.style.display = 'none';
+            }
+
+            if (ORGANIZATION_NAME) {
+                displayOrgRepos();
+            } else {
+                document.getElementById('orgSection').style.display = 'none';
+                if(orgLoader) orgLoader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

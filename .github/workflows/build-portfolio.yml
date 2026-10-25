@@ -1,0 +1,121 @@
+# Workflow name as displayed on the Actions tab
+name: Build and Deploy Portfolio Data
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the main branch
+  push:
+    branches:
+      - main # Or your default branch (e.g., master)
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets default permissions granted to the GITHUB_TOKEN for the entire workflow.
+permissions:
+  contents: read    # Allows checkout of the repository code.
+  pages: write      # Allows a deployment to GitHub Pages.
+  id-token: write   # Allows authentication to OIDC (required by actions/deploy-pages@v4).
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Defines a job named "build-and-deploy"
+  build-and-deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Specifies the deployment environment. This is crucial for actions/deploy-pages.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # Sets the environment URL to the deployed page URL
+
+    # A job contains a sequence of tasks called steps
+    steps:
+      # Step 1: Check out your repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Step 3: Create the private_data.txt file (RENAMED)
+      - name: Create private_data.txt
+        env:
+          # Provide the PAT securely via repository secrets
+          GH_TOKEN: ${{ secrets.GH_PAT_FOR_PAGES }}
+        run: |
+          # Create the Node.js script inline
+          cat << 'EOF' > generate_private_data.js
+          const https = require('https');
+          const fs = require('fs');
+          const token = process.env.GH_TOKEN;
+          const outputFilename = 'private_data.txt'; // Define filename
+
+          if (!token || token.trim() === "") {
+              console.warn(`GH_TOKEN environment variable not found or is empty. Creating empty ${outputFilename}.`);
+              fs.writeFileSync(outputFilename, JSON.stringify([]));
+              process.exit(0);
+          }
+
+          const options = {
+              hostname: 'api.github.com',
+              path: '/user/repos?visibility=private&sort=updated&per_page=50', // Corrected path
+              method: 'GET',
+              headers: {
+                  'Authorization': `token ${token}`,
+                  'User-Agent': 'GitHub-Action-Portfolio-Builder-Workflow',
+                  'Accept': 'application/vnd.github.v3+json'
+              }
+          };
+
+          https.get(options, (res) => {
+              let data = '';
+              res.on('data', (chunk) => { data += chunk; });
+              res.on('end', () => {
+                  if (res.statusCode >= 200 && res.statusCode < 300) {
+                      try {
+                          const repos = JSON.parse(data);
+                          const privateRepoInfo = repos.map(repo => ({
+                              name: repo.name,
+                              html_url: repo.html_url,
+                              homepage: repo.homepage || null
+                          }));
+                          // Write to the RENAMED file
+                          fs.writeFileSync(outputFilename, JSON.stringify(privateRepoInfo, null, 2));
+                          console.log(`Successfully generated ${outputFilename} with ${privateRepoInfo.length} private repos.`);
+                      } catch (e) {
+                          console.error(`Error parsing JSON response or writing ${outputFilename}:`, e);
+                          fs.writeFileSync(outputFilename, JSON.stringify([]));
+                      }
+                  } else {
+                      console.error(`GitHub API for private repos responded with ${res.statusCode}: ${data}`);
+                      fs.writeFileSync(outputFilename, JSON.stringify([]));
+                  }
+              });
+          }).on('error', (err) => {
+              console.error('Error making HTTPS request to GitHub API:', err.message);
+              fs.writeFileSync(outputFilename, JSON.stringify([]));
+          });
+          EOF
+
+          # Execute the Node.js script
+          node generate_private_data.js
+
+          # Debugging: Print the content of the RENAMED file
+          echo "--- Content of private_data.txt (if created) ---"
+          cat private_data.txt || echo "private_data.txt was not found or is empty after script execution."
+          echo "--- End of content ---"
+
+      # Step 4: Upload artifact for GitHub Pages
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload the entire current directory
+          path: '.'
+
+      # Step 5: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
