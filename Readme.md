@@ -1,6 +1,6 @@
 # My Dynamic GitHub Portfolio (Envoy-Portfolio)
 
-[![GitHub Pages Deploy](https://github.com/Envoyofhell/Envoy-Portfolio/actions/workflows/build-portfolio.yml/badge.svg)](https://github.com/Envoyofhell/Envoy-Portfolio/actions/workflows/build-portfolio.yml)
+[![GitHub Pages Deploy](https://github.com/EnvoysRealm/Envoy-Portfolio/actions/workflows/build-portfolio.yml/badge.svg)](https://github.com/EnvoysRealm/Envoy-Portfolio/actions/workflows/build-portfolio.yml)
 
 **Live Demo:** [https://envoyofhell.github.io/Envoy-Portfolio/](https://envoyofhell.github.io/Envoy-Portfolio/)
 
